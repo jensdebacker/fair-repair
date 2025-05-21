@@ -20,7 +20,8 @@ export async function generateStaticParams() {
     }));
 }
 
-export async function generateMetadata({ params }: { params: { category: string, slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ category: string, slug: string }> }) {
+    const params = await props.params;
     const item = await getContentItem(decodeURIComponent(params.category), decodeURIComponent(params.slug));
     if (!item) {
         return { title: 'Content Niet Gevonden' };
@@ -55,7 +56,8 @@ const mdxComponents = {
     // Voeg hier andere custom componenten toe
 };
 
-export default async function ContentPage({ params }: { params: { category: string, slug: string } }) {
+export default async function ContentPage(props: { params: Promise<{ category: string, slug: string }> }) {
+    const params = await props.params;
     const item = await getContentItem(decodeURIComponent(params.category), decodeURIComponent(params.slug));
 
     if (!item) {

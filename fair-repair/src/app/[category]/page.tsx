@@ -10,7 +10,8 @@ export async function generateStaticParams() {
     return VALID_CATEGORIES.map(category => ({ category }));
 }
 
-export async function generateMetadata({ params }: { params: { category: string } }) {
+export async function generateMetadata(props: { params: Promise<{ category: string }> }) {
+    const params = await props.params;
     const { category } = params;
     const decodedCategory = decodeURIComponent(category);
     if (!VALID_CATEGORIES.includes(decodedCategory)) {
@@ -23,7 +24,8 @@ export async function generateMetadata({ params }: { params: { category: string 
     };
 }
 
-export default async function CategoryPage({ params }: { params: { category: string } }) {
+export default async function CategoryPage(props: { params: Promise<{ category: string }> }) {
+    const params = await props.params;
     const category = decodeURIComponent(params.category);
 
     if (!VALID_CATEGORIES.includes(category)) {
