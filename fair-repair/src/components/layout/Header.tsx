@@ -1,4 +1,4 @@
-"use client"; // Als NavigationMenu client-side interactiviteit vereist
+"use client";
 
 import Link from 'next/link';
 import {
@@ -7,12 +7,18 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
     navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"; // Shadcn/UI
+} from "@/components/ui/navigation-menu";
 import { Button } from '@/components/ui/button';
-// Importeer een logo component of afbeelding
-// import Logo from './Logo';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // Voor mobiel menu
+import { MenuIcon } from "lucide-react"; // Lucide icon voor hamburger
 
-const navLinks =;
+// Definieer een interface voor de navigatielinks
+interface NavLinkItem {
+    href: string;
+    label: string;
+}
+
+const navLinks: NavLinkItem[] = [];
 
 export default function Header() {
     return (
@@ -24,7 +30,7 @@ export default function Header() {
                 </Link>
                 <NavigationMenu className="hidden md:flex">
                     <NavigationMenuList>
-                        {navLinks.map((link) => (
+                        {navLinks.map((link: NavLinkItem) => ( // Type toegevoegd aan link
                             <NavigationMenuItem key={link.href}>
                                 <Link href={link.href} legacyBehavior passHref>
                                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -36,13 +42,34 @@ export default function Header() {
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="md:hidden">
-                    {/* Mobiel menu knop (bijv. Hamburger icon) */}
-                    <Button variant="outline" size="icon">
-                        {/* <MenuIcon className="h-5 w-5" /> */}
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                    </Button>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="outline" size="icon">
+                                <MenuIcon className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right">
+                            <nav className="grid gap-4 text-lg p-4">
+                                {navLinks.map((link: NavLinkItem) => (
+                                    <Link key={link.href} href={link.href} legacyBehavior passHref>
+                                        <NavigationMenuLink
+                                            className={`${navigationMenuTriggerStyle()} justify-start`}
+                                            onClick={() => {
+                                                // Optioneel: sluit sheet na klikken
+                                                // Dit vereist state management voor de Sheet open/close state
+                                                const trigger = document.querySelector('[aria-expanded="true"]');
+                                                if (trigger instanceof HTMLElement) {
+                                                    trigger.click();
+                                                }
+                                            }}
+                                        >
+                                            {link.label}
+                                        </NavigationMenuLink>
+                                    </Link>
+                                ))}
+                            </nav>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </header>

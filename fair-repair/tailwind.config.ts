@@ -1,11 +1,16 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
-  content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
-
+const config = {
+  darkMode: "class",
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}", // src map ook meenemen
+  ],
+  prefix: "",
   theme: {
     container: {
-      // Nodig voor Shadcn/UI
       center: true,
       padding: "2rem",
       screens: {
@@ -50,13 +55,11 @@ const config: Config = {
         "brand-primary": "#1E92C0", // Directe toevoeging van de HEX kleur
       },
       borderRadius: {
-        // Nodig voor Shadcn/UI
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        // Nodig voor Shadcn/UI
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -67,12 +70,12 @@ const config: Config = {
         },
       },
       animation: {
-        // Nodig voor Shadcn/UI
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")], // tailwindcss-animate is een Shadcn/UI dependency
-};
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+} satisfies Config;
+
 export default config;
