@@ -11,8 +11,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { category: string } }) {
-    const category = decodeURIComponent(params.category);
-    if (!VALID_CATEGORIES.includes(category)) {
+    const { category } = params;
+    const decodedCategory = decodeURIComponent(category);
+    if (!VALID_CATEGORIES.includes(decodedCategory)) {
         return { title: 'Categorie Niet Gevonden' };
     }
     const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
