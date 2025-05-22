@@ -4,6 +4,18 @@ import matter from "gray-matter";
 
 const contentDirectory = path.join(process.cwd(), "content");
 
+export interface Post {
+  slug: string;
+  title: string;
+  date: string; // Of Date, afhankelijk van hoe je het verwerkt
+  category: string;
+  image?: string; // Optioneel, als niet elk bericht een afbeelding heeft
+  description?: string; // Optioneel
+  featured?: boolean; // Optioneel, voor uitgelichte berichten
+  // Voeg hier eventuele andere velden toe die je uit je Markdown frontmatter haalt
+  content?: string; // Optioneel, als je de content apart wilt opslaan/verwerken
+}
+
 export interface ContentMetadata {
   slug: string;
   title: string;
@@ -17,7 +29,12 @@ export interface ContentMetadata {
   [key: string]: any; // Voor overige frontmatter velden
 }
 
+//hiermee kun je de content metadata ophalen
+// Dit is de functie die alle content metadata ophaalt
+//gebruikt op de homepage en in de categorie pagina's
 export async function getAllContentMetadata(): Promise<ContentMetadata[]> {
+  // Hier wordt de content directory gedefinieerd
+  // Dit is de functie die alle content metadata ophaalt
   const allContent: ContentMetadata[] = [];
   const categories = fs
     .readdirSync(contentDirectory, { withFileTypes: true })
@@ -70,6 +87,8 @@ export async function getContentByCategory(
   );
 }
 
+// Dit is de functie die een specifieke content item ophaalt
+// gebruikt op de detailpagina's van artikelen, reviews en gidsen
 export async function getContentItem(
   category: string,
   slug: string
@@ -106,6 +125,8 @@ export async function getContentItem(
   }
 }
 
+// Dit is de functie die alle content paden ophaalt
+// gebruikt voor de sitemap en de statische generatie van pagina's
 export async function getAllContentPaths() {
   const allContent = await getAllContentMetadata();
   return allContent.map((item: ContentMetadata) => ({

@@ -36,7 +36,7 @@ export async function generateMetadata(props: { params: Promise<{ category: stri
         }
     };
 }
-
+//Hierin kun je de MDX componenten definiëren die je wilt gebruiken in je content
 const mdxComponents = {
     AffiliateLink,
     Alert,
@@ -56,6 +56,7 @@ const mdxComponents = {
     // Voeg hier andere custom componenten toe
 };
 
+// Hier kun je de layout componenten importeren die je hebt gemaakt zoals RepairGuideLayout, ReviewLayout, etc.
 export default async function ContentPage(props: { params: Promise<{ category: string, slug: string }> }) {
     const params = await props.params;
     const item = await getContentItem(decodeURIComponent(params.category), decodeURIComponent(params.slug));
@@ -63,9 +64,10 @@ export default async function ContentPage(props: { params: Promise<{ category: s
     if (!item) {
         notFound();
     }
-
+    //laadt de data van de content
     const { metadata, content } = item;
-
+    //gaat bepalen welke layout component er gebruikt moet worden op basis van de metadata
+    // Hier kun je de layout componenten importeren die je hebt gemaakt zoals RepairGuideLayout, ReviewLayout, etc.
     let LayoutComponent;
     switch (metadata.layoutType) {
         case 'repairGuide':

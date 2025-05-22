@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Hier definieer je de geldige categorieën, deze kunnen worden uitgebreid
 const VALID_CATEGORIES = ['smartphones', 'tablets', 'smartwatches', 'gameconsoles', 'tech-uitgelegd', 'how-to'];
 
 export async function generateStaticParams() {
     return VALID_CATEGORIES.map(category => ({ category }));
 }
 
+// Dit is de metadata die wordt weergegeven in de browser tab
+// en in zoekmachines. Het is belangrijk voor SEO.
 export async function generateMetadata(props: { params: Promise<{ category: string }> }) {
     const params = await props.params;
     const { category } = params;
@@ -24,6 +27,7 @@ export async function generateMetadata(props: { params: Promise<{ category: stri
     };
 }
 
+// Dit is de hoofdpagina voor elke categorie. Hier worden de artikelen, reviews en gidsen weergegeven.
 export default async function CategoryPage(props: { params: Promise<{ category: string }> }) {
     const params = await props.params;
     const category = decodeURIComponent(params.category);
@@ -32,10 +36,12 @@ export default async function CategoryPage(props: { params: Promise<{ category: 
         notFound();
     }
 
+    // Haal de content op voor de opgegeven categorie
     const items: ContentMetadata[] = await getContentByCategory(category);
 
     // Correctie: controleer of items bestaat en een array is voordat length wordt gebruikt
     if (!items || items.length === 0) {
+
         // notFound(); // Optioneel: stuur naar 404 als lege categorieën niet gewenst zijn
         // Of toon een bericht:
         const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
