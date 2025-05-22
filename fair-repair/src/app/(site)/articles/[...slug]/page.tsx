@@ -45,8 +45,11 @@ export default async function ArticlePage({ params }: Props) {
         notFound();
     }
 
+    // Breadcrumb type with optional isActive
+    type Breadcrumb = { label: string; href: string; isActive?: boolean };
+
     // Voorbeeld breadcrumbs
-    const breadcrumbs = [{ label: "Home", href: "/" }, { label: "Artikelen", href: "/articles" }];
+    const breadcrumbs: Breadcrumb[] = [{ label: "Home", href: "/" }, { label: "Artikelen", href: "/articles" }];
     if (post.categoryPath) {
         breadcrumbs.push({
             label: post.categoryPath.split('/').map(s => s.charAt(0).toUpperCase() + s.slice(1).replace(/-/g, ' ')).join(' > '),
