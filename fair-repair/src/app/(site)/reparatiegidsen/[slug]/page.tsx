@@ -20,5 +20,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ReparatiegidsPage({ params }: PageProps) {
     const gids = await getContentItemBySlugAndType<Reparatiegids>('reparatiegidsen', params.slug);
     if (!gids) notFound();
-    return <RepairGuideLayout guide={gids} />;
+    return <RepairGuideLayout metadata={gids} />;
 }
