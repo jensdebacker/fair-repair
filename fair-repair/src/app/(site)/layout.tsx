@@ -1,5 +1,5 @@
 // app/(site)/layout.tsx
-import Navbar from "@/components/layout/Navbar";
+import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import MobileNav from "@/components/layout/MobileNav";
 
@@ -11,7 +11,7 @@ export default function SiteLayout({ // Must be a default export and a function
 }) {
     return (
         <div className="flex flex-col min-h-dvh">
-            <Navbar />
+            <Header />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 pb-24 md:pb-10">
                 {children}
             </main>

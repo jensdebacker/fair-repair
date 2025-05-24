@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useTheme } from 'next-themes';
-import Navbar from './Navbar';
 import MobileNav from './MobileNav';
-import { getAllContentListItems } from '@/lib/content';
-import { BaseContent, ContentListItem } from '@/lib/types'; // Zorg ervoor dat BaseArticle correct gedefinieerd is
 
 // Definieer categorieën die doorzoekbaar moeten zijn
 const siteCategories = [
@@ -29,6 +26,16 @@ interface SearchResultItem {
     categoryName?: string;
 }
 
+interface ContentListItem {
+    slug: string;
+    title: string;
+    date: string;
+    summary: string;
+    image?: string;
+    type: string;
+    productCategory: string;
+}
+
 export default function Header() {
     console.log("Header component rendering...");
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -38,29 +45,59 @@ export default function Header() {
     const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
     const [allSearchableData, setAllSearchableData] = useState<SearchResultItem[]>([]);
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [dataLoaded, setDataLoaded] = useState(false);
+
     const searchContainerRef = useRef<HTMLDivElement>(null);
     const mobileSearchContainerRef = useRef<HTMLDivElement>(null);
+
+    // Functie om data op te halen via API route
+    const fetchSearchData = async (): Promise<ContentListItem[]> => {
+        try {
+            console.log("fetchSearchData: Making API call...");
+            const response = await fetch('/api/search-data');
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("fetchSearchData: API response:", data);
+            return data.articles || [];
+        } catch (error) {
+            console.error("fetchSearchData: Error fetching search data:", error);
+            throw error;
+        }
+    };
 
     useEffect(() => {
         console.log("useEffect: Initial data fetch running...");
         const fetchAndPrepareData = async () => {
+            if (dataLoaded) return; // Voorkom dubbele calls
+
             console.log("fetchAndPrepareData: Starting to fetch articles.");
+            setIsLoading(true);
+
             try {
-                const articles: ContentListItem[] = await getAllContentListItems(); console.log("fetchAndPrepareData: Articles fetched:", articles);
+                const articles: ContentListItem[] = await fetchSearchData();
+                console.log("fetchAndPrepareData: Articles fetched:", articles);
 
                 if (!articles || articles.length === 0) {
-                    console.warn("fetchAndPrepareData: No articles returned from getAllArticles().");
+                    console.warn("fetchAndPrepareData: No articles returned from API.");
+                    setAllSearchableData([]);
+                    setDataLoaded(true);
+                    return;
                 }
 
                 const articleResults: SearchResultItem[] = articles.map(article => {
                     if (!article.title || !article.slug || !article.productCategory) {
-                        console.warn("fetchAndPrepareData: Article missing title, slug, or category:", article);
+                        console.warn("fetchAndPrepareData: Article missing required fields:", article);
                     }
                     return {
                         id: article.slug,
-                        type: 'article',
-                        title: article.title,
-                        href: `/${article.productCategory}/${article.slug}`, // Zorg dat article.category de slug is
+                        type: 'article' as const,
+                        title: article.title || 'Geen titel',
+                        href: `/${article.productCategory}/${article.slug}`,
                         categoryName: siteCategories.find(c => c.slug === article.productCategory)?.name || article.productCategory,
                     };
                 });
@@ -68,26 +105,35 @@ export default function Header() {
 
                 const categoryResults: SearchResultItem[] = siteCategories.map(category => ({
                     id: category.slug,
-                    type: 'category',
+                    type: 'category' as const,
                     title: category.name,
                     href: category.href,
                 }));
                 console.log("fetchAndPrepareData: Mapped category results:", categoryResults);
 
                 const combinedData = [...articleResults, ...categoryResults];
+                console.log("fetchAndPrepareData: Combined data before setting state:", combinedData);
                 setAllSearchableData(combinedData);
-                console.log("fetchAndPrepareData: All searchable data set:", combinedData);
+                setDataLoaded(true);
+                console.log("fetchAndPrepareData: All searchable data set successfully");
             } catch (error) {
-                console.error("fetchAndPrepareData: Failed to load or process articles for search:", error);
+                console.error("fetchAndPrepareData: Error during data fetching:", error);
                 setAllSearchableData([]);
+                setDataLoaded(true);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchAndPrepareData();
-    }, []);
+    }, [dataLoaded]);
 
+    // Debounced search effect
     useEffect(() => {
-        console.log(`useEffect: searchQuery or allSearchableData changed. searchQuery: "${searchQuery}"`);
+        console.log(`useEffect: searchQuery changed. New query: "${searchQuery}"`);
+        console.log(`useEffect: Current allSearchableData:`, allSearchableData);
+        console.log(`useEffect: allSearchableData length:`, allSearchableData.length);
+
         if (searchQuery.trim() === '') {
             console.log("useEffect (filter): Search query is empty, clearing results.");
             setSearchResults([]);
@@ -95,47 +141,69 @@ export default function Header() {
             return;
         }
 
-        console.log("useEffect (filter): Filtering data. All searchable data length:", allSearchableData.length);
-        if (allSearchableData.length === 0) {
-            console.warn("useEffect (filter): No searchable data available to filter. Check if data loaded correctly.");
-        }
+        // Verlaag debounce voor snellere feedback tijdens debugging
+        const timeoutId = setTimeout(() => {
+            console.log("useEffect (filter): Starting filter process...");
+            console.log("useEffect (filter): All searchable data:", allSearchableData);
 
-        const lowerCaseQuery = searchQuery.toLowerCase();
-        const filteredResults = allSearchableData.filter(item => {
-            const itemTitle = item.title ? item.title.toLowerCase() : '';
-            // console.log(`useEffect (filter): Checking item: "${itemTitle}" against query: "${lowerCaseQuery}"`);
-            return itemTitle.includes(lowerCaseQuery);
-        });
+            if (allSearchableData.length === 0) {
+                console.warn("useEffect (filter): No searchable data available to filter.");
+                setSearchResults([]);
+                setIsDropdownVisible(false);
+                return;
+            }
 
-        console.log(`useEffect (filter): Filtered results for "${searchQuery}":`, filteredResults);
-        setSearchResults(filteredResults);
-        setIsDropdownVisible(filteredResults.length > 0);
-        console.log(`useEffect (filter): isDropdownVisible set to ${filteredResults.length > 0}`);
+            const lowerCaseQuery = searchQuery.toLowerCase();
+            console.log(`useEffect (filter): Searching for: "${lowerCaseQuery}"`);
+
+            const filteredResults = allSearchableData.filter(item => {
+                const itemTitle = item.title ? item.title.toLowerCase() : '';
+                const matches = itemTitle.includes(lowerCaseQuery);
+                console.log(`useEffect (filter): "${itemTitle}" matches "${lowerCaseQuery}"? ${matches}`);
+                return matches;
+            });
+
+            console.log(`useEffect (filter): Filtered results for "${searchQuery}":`, filteredResults);
+            console.log(`useEffect (filter): Number of filtered results:`, filteredResults.length);
+
+            setSearchResults(filteredResults);
+            const shouldShowDropdown = filteredResults.length > 0;
+            setIsDropdownVisible(shouldShowDropdown);
+
+            console.log(`useEffect (filter): Setting isDropdownVisible to ${shouldShowDropdown}`);
+            console.log(`useEffect (filter): Current searchResults state will be:`, filteredResults);
+        }, 100); // Verlaagd van 300ms naar 100ms voor snellere debugging
+
+        return () => clearTimeout(timeoutId);
     }, [searchQuery, allSearchableData]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             let closeDropdown = false;
-            // Check desktop: if ref exists, click is outside, and mobile nav is NOT open
-            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node) && !isMobileNavOpen) {
+
+            if (searchContainerRef.current &&
+                !searchContainerRef.current.contains(event.target as Node) &&
+                !isMobileNavOpen) {
                 closeDropdown = true;
             }
-            // Check mobile: if ref exists, click is outside, and mobile nav IS open
-            if (mobileSearchContainerRef.current && !mobileSearchContainerRef.current.contains(event.target as Node) && isMobileNavOpen) {
+
+            if (mobileSearchContainerRef.current &&
+                !mobileSearchContainerRef.current.contains(event.target as Node) &&
+                isMobileNavOpen) {
                 closeDropdown = true;
             }
 
             if (closeDropdown) {
-                // console.log("handleClickOutside: Closing dropdown.");
+                console.log("handleClickOutside: Closing dropdown.");
                 setIsDropdownVisible(false);
             }
         }
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [isMobileNavOpen]);
-
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newQuery = e.target.value;
@@ -145,46 +213,50 @@ export default function Header() {
 
     const handleInputFocus = () => {
         console.log("handleInputFocus: Input focused. Current query:", searchQuery, "Results length:", searchResults.length);
-        // Show dropdown if there's a query and results, or even if query is empty but input is focused (optional)
         if (searchQuery.trim() !== '' && searchResults.length > 0) {
             console.log("handleInputFocus: Showing dropdown because query and results exist.");
             setIsDropdownVisible(true);
-        } else if (searchQuery.trim() === '' && allSearchableData.length > 0) {
-            // Optioneel: toon alle items of recente zoekopdrachten bij focus op lege input
-            // Voor nu: doe niets of toon een beperkte lijst
-            // setIsDropdownVisible(true); // Dit zou alle items tonen als searchResults dan gevuld wordt
         }
     };
 
     const onItemClick = () => {
         console.log("onItemClick: Item clicked from dropdown.");
         setIsDropdownVisible(false);
-        setSearchQuery(''); // Wis zoekopdracht na selectie
+        setSearchQuery('');
     };
 
     const renderDropdown = (isMobile = false) => {
-        // Deze check is cruciaal en moet vóór de JSX.
+        console.log(`renderDropdown called: isMobile=${isMobile}`);
+        console.log(`renderDropdown: isDropdownVisible=${isDropdownVisible}`);
+        console.log(`renderDropdown: searchResults.length=${searchResults.length}`);
+        console.log(`renderDropdown: searchResults=`, searchResults);
+        console.log(`renderDropdown: isMobileNavOpen=${isMobileNavOpen}`);
+
         if (!isDropdownVisible || searchResults.length === 0) {
-            // console.log(`renderDropdown: Not rendering. isDropdownVisible: ${isDropdownVisible}, searchResults length: ${searchResults.length}`);
-            return null;
-        }
-        // Voorkom dat de verkeerde dropdown rendert
-        if (isMobile && !isMobileNavOpen) {
-            // console.log("renderDropdown (mobile): Not rendering because mobile nav is closed.");
-            return null;
-        }
-        if (!isMobile && isMobileNavOpen) {
-            // console.log("renderDropdown (desktop): Not rendering because mobile nav is open.");
+            console.log("renderDropdown: Not rendering - no visibility or no results");
             return null;
         }
 
-        console.log(`renderDropdown: Rendering dropdown. isMobile: ${isMobile}, Items:`, searchResults);
+        if (isMobile && !isMobileNavOpen) {
+            console.log("renderDropdown: Not rendering mobile dropdown - mobile nav closed");
+            return null;
+        }
+        if (!isMobile && isMobileNavOpen) {
+            console.log("renderDropdown: Not rendering desktop dropdown - mobile nav open");
+            return null;
+        }
+
+        console.log(`renderDropdown: RENDERING dropdown. isMobile: ${isMobile}, Items:`, searchResults);
 
         return (
             <div
                 data-testid={isMobile ? "mobile-search-dropdown" : "desktop-search-dropdown"}
                 className={`absolute mt-1 w-full ${isMobile ? '' : 'md:w-96'} max-h-80 overflow-y-auto rounded-md bg-background border border-border shadow-lg py-1 z-[55]`}
+                style={{ backgroundColor: 'white', border: '2px solid red' }} // Tijdelijke debug styling
             >
+                <div className="px-4 py-2 text-xs text-gray-500 border-b">
+                    {searchResults.length} resultaten gevonden
+                </div>
                 {searchResults.map(item => (
                     <Link
                         key={`${item.type}-${item.id}-${isMobile ? 'mobile' : 'desktop'}`}
@@ -195,14 +267,14 @@ export default function Header() {
                                 setIsMobileNavOpen(false);
                             }
                         }}
-                        className="block px-4 py-2 text-sm hover:bg-muted focus:bg-muted focus:outline-none"
+                        className="block px-4 py-2 text-sm hover:bg-muted focus:bg-muted focus:outline-none border-b border-gray-100"
                     >
-                        <div className="font-medium">{item.title || "Geen titel"}</div>
+                        <div className="font-medium text-black">{item.title}</div>
                         {item.type === 'article' && item.categoryName && (
-                            <div className="text-xs text-muted-foreground">in {item.categoryName}</div>
+                            <div className="text-xs text-gray-600">in {item.categoryName}</div>
                         )}
                         {item.type === 'category' && (
-                            <div className="text-xs text-muted-foreground">Categorie</div>
+                            <div className="text-xs text-gray-600">Categorie</div>
                         )}
                     </Link>
                 ))}
@@ -213,27 +285,29 @@ export default function Header() {
     const showDesktopDropdown = isDropdownVisible && searchResults.length > 0 && !isMobileNavOpen;
     const showMobileDropdown = isDropdownVisible && searchResults.length > 0 && isMobileNavOpen;
 
-    // console.log(`Dropdown visibility: Desktop=${showDesktopDropdown}, Mobile=${showMobileDropdown}, isMobileNavOpen=${isMobileNavOpen}, isDropdownVisible=${isDropdownVisible}, results=${searchResults.length}`);
+    console.log(`Render: showDesktopDropdown=${showDesktopDropdown}, showMobileDropdown=${showMobileDropdown}`);
+    console.log(`Render: isDropdownVisible=${isDropdownVisible}, searchResults.length=${searchResults.length}, isMobileNavOpen=${isMobileNavOpen}`);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  mx-auto">
+            <div className="container flex h-16 items-center justify-between max-w-6xl mx-auto">
                 <Link href="/" className="flex items-center space-x-2">
                     <span className="font-bold text-lg">FairRepair</span>
                 </Link>
 
                 {/* Desktop Navigation & Search */}
                 <div className="hidden md:flex md:items-center md:space-x-6">
-                    <Navbar />
+
                     <div className="relative" ref={searchContainerRef}>
                         <div className="relative flex items-center">
                             <Input
                                 type="search"
-                                placeholder="Zoeken..."
+                                placeholder={isLoading ? "Laden..." : "Zoeken..."}
                                 className="pr-10 h-9"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
                                 onFocus={handleInputFocus}
+                                disabled={isLoading}
                                 aria-label="Zoeken op site"
                             />
                             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
@@ -272,11 +346,12 @@ export default function Header() {
                                 <div className="relative flex items-center">
                                     <Input
                                         type="search"
-                                        placeholder="Zoeken..."
+                                        placeholder={isLoading ? "Laden..." : "Zoeken..."}
                                         className="pr-10 h-9 w-full"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
                                         onFocus={handleInputFocus}
+                                        disabled={isLoading}
                                         aria-label="Zoeken op site (mobiel)"
                                     />
                                     <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />

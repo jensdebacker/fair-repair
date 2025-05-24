@@ -3,6 +3,7 @@ import PopularCategories from "@/components/sections/PopularCategories";
 import RecentArticles from "@/components/sections/RecentArticles";
 import FeaturedGuides from "@/components/sections/FeaturedGuides";
 import { Metadata } from "next";
+import Header from "@/components/layout/Header";
 
 // Specifieke metadata voor de homepage
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default async function HomePage() {
     <>
       {/* Hero Section - Komt overeen met Desktop design */}
       {/* Op mobiel zal deze sectie gewoon boven de andere content staan. */}
+
       <Hero />
       <PopularCategories />
       {/* Volgorde zoals in de nieuwe designs (mobiel prominent, desktop logisch) */}
