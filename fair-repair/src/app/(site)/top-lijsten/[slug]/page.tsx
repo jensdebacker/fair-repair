@@ -13,8 +13,8 @@ interface PageProps {
     params: { slug: string };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
+export async function generateMetadata({ params: { slug } }: PageProps): Promise<Metadata> {
+    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', slug);
 
     if (!list) {
         return {
@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default async function TopXListPage({ params }: PageProps) {
-    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
+export default async function TopXListPage({ params: { slug } }: PageProps) {
+    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', slug);
 
     if (!list) {
         notFound();
