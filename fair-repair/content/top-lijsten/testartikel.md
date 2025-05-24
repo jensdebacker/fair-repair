@@ -1,10 +1,10 @@
 ---
-title: "Top 3 Meest Repareerbare Smartphones van 2025"
+title: "Werkt deze?"
 date: "2025-05-20"
 author: "Fair-repair Team"
 productCategory: "smartphones" # BELANGRIJK
 type: "top-lijsten"
-slug: "top-3-meest-repareerbare-smartphones-2025"
+slug: "top-test"
 tags:
   ["smartphones", "repareerbaarheid", "duurzaamheid", "toplijst", "keuzegids"]
 description: "Op zoek naar een smartphone die je zelf kunt repareren? Ontdek onze top 3 van meest reparatievriendelijke smartphones van 2025."
