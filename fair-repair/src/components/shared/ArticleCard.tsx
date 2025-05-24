@@ -29,8 +29,7 @@ const getBasePathForType = (type: ContentType): string => {
 
 export default function ArticleCard({ item }: ArticleCardProps) {
     const basePath = getBasePathForType(item.type);
-    const href = `<span class="math-inline">\{basePath\}/</span>{item.slug}`;
-
+    const href = `${basePath}/${item.slug}`;
     return (
         <Link href={href} className="group block h-full">
             <Card className="h-full flex flex-col transition-shadow duration-300 ease-in-out group-hover:shadow-lg">
