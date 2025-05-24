@@ -1,89 +1,54 @@
-import { getContentByCategory, ContentMetadata } from '@/lib/content';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from 'next/link';
+// src/app/(site)/[category]/page.tsx
+import { getContentListItemsByProductCategory } from '@/lib/content';
+import { Category } from '@/lib/types';
+import ArticleCard from '@/components/shared/ArticleCard';
+import SectionTitle from '@/components/shared/SectionTitle';
 import { notFound } from 'next/navigation';
 
-// Hier definieer je de geldige categorieën, deze kunnen worden uitgebreid
-const VALID_CATEGORIES = ['smartphones', 'tablets', 'smartwatches', 'gameconsoles', 'tech-uitgelegd', 'how-to'];
+const validCategories: Category[] = ["smartphones", "tablets", "smartwatches", "gameconsoles", "algemeen"];
 
 export async function generateStaticParams() {
-    return VALID_CATEGORIES.map(category => ({ category }));
+    return validCategories.map((category) => ({
+        category: category,
+    }));
 }
 
-// Dit is de metadata die wordt weergegeven in de browser tab
-// en in zoekmachines. Het is belangrijk voor SEO.
-export async function generateMetadata(props: { params: Promise<{ category: string }> }) {
-    const params = await props.params;
-    const { category } = params;
-    const decodedCategory = decodeURIComponent(category);
-    if (!VALID_CATEGORIES.includes(decodedCategory)) {
-        return { title: 'Categorie Niet Gevonden' };
-    }
-    const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
-    return {
-        title: `${categoryName} - Overzicht`,
-        description: `Vind alle artikelen, reviews en gidsen over ${categoryName} op Fair-repair.`,
+interface CategoryPageProps {
+    params: {
+        category: Category;
     };
 }
 
-// Dit is de hoofdpagina voor elke categorie. Hier worden de artikelen, reviews en gidsen weergegeven.
-export default async function CategoryPage(props: { params: Promise<{ category: string }> }) {
-    const params = await props.params;
-    const category = decodeURIComponent(params.category);
+export async function generateMetadata({ params }: CategoryPageProps) {
+    const categoryName = params.category.charAt(0).toUpperCase() + params.category.slice(1);
+    return {
+        title: `${categoryName} - Alle Artikelen en Gidsen`,
+        description: `Vind alle informatie over ${params.category}, inclusief reviews, reparatiegidsen en meer.`,
+    };
+}
 
-    if (!VALID_CATEGORIES.includes(category)) {
+export default async function CategoryPage({ params }: CategoryPageProps) {
+    const { category } = params;
+
+    if (!validCategories.includes(category)) {
         notFound();
     }
 
-    // Haal de content op voor de opgegeven categorie
-    const items: ContentMetadata[] = await getContentByCategory(category);
-
-    // Correctie: controleer of items bestaat en een array is voordat length wordt gebruikt
-    if (!items || items.length === 0) {
-
-        // notFound(); // Optioneel: stuur naar 404 als lege categorieën niet gewenst zijn
-        // Of toon een bericht:
-        const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
-        return (
-            <div>
-                <h1 className="text-4xl font-bold mb-8">{categoryName}</h1>
-                <p>Er is momenteel geen content beschikbaar in deze categorie.</p>
-            </div>
-        );
-    }
-    const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+    const items = await getContentListItemsByProductCategory(category);
 
     return (
-        <div>
-            <h1 className="text-4xl font-bold mb-8">{categoryName}</h1>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map((item: ContentMetadata) => (
-                    <Card key={item.slug + item.category} className="flex flex-col">
-                        {item.featuredImage && (
-                            <Link href={`/${item.category}/${item.slug}`} className="block">
-                                <img src={item.featuredImage} alt={item.title} className="rounded-t-lg aspect-video object-cover hover:opacity-80 transition-opacity" />
-                            </Link>
-                        )}
-                        <CardHeader>
-                            <CardTitle>
-                                <Link href={`/${item.category}/${item.slug}`} className="hover:text-primary transition-colors">
-                                    {item.title}
-                                </Link>
-                            </CardTitle>
-                            <CardDescription>{new Date(item.date).toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                            <p className="text-sm text-muted-foreground">{item.excerpt}</p>
-                        </CardContent>
-                        <div className="p-6 pt-0">
-                            <Button variant="link" asChild className="p-0">
-                                <Link href={`/${item.category}/${item.slug}`}>Lees meer &rarr;</Link>
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+        <div className="container mx-auto px-4 py-8">
+
+            <SectionTitle title={category.charAt(0).toUpperCase() + category.slice(1)} />
+            {items.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.map((item) => (
+                        <ArticleCard key={`<span class="math-inline">\{item\.type\}\-</span>{item.slug}`} item={item} />
+                    ))}
+                </div>
+            ) : (
+                <p>Er zijn nog geen artikelen, gidsen of reviews beschikbaar in de categorie {category}.</p>
+            )}
         </div>
     );
 }

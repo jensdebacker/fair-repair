@@ -1,11 +1,13 @@
 ---
-title: "Zelf je Smartphone Batterij Vervangen vbs"
-date: "2025-05-22"
-author: "Fair-repair Team"
-category: "Reparatiegidsen"
-slug: "reparatiegids-smartphone-batterij-vervangen"
-tags: ["smartphone", "batterij", "reparatie", "diy"]
-description: "Leer hoe je zelf de batterij van je smartphone kunt vervangen en bespaar op reparatiekosten. Volg onze gedetailleerde gids."
+title: "Reparatiegids: Smartphone Batterij Vervangen"
+date: "2024-05-22"
+summary: "Een stap-voor-stap gids om de batterij van je smartphone te vervangen."
+image: "/images/placeholder-gids.jpg"
+productCategory: "smartphones" # BELANGRIJK
+type: "reparatiegids" # Kan impliciet, maar expliciet helpt
+difficulty: "gemiddeld"
+tools: ["Schroevendraaierset", "Plectrum", "Zuignap"]
+costBenefitAnalysis: "Kosten nieuwe batterij vs. nieuwe telefoon."
 ---
 
 Is de batterij van je smartphone snel leeg of valt je telefoon plotseling uit? Dan is het misschien tijd om de batterij te vervangen. Hoewel het per model verschilt, is het vaak mogelijk om dit zelf te doen. Deze gids helpt je op weg.

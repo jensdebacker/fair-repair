@@ -4,10 +4,11 @@ import { Category } from '@/lib/types';
 
 // Pas aan naar de categorieën in je mobiele design
 const categoriesData: Category[] = [
-    { slug: 'smartphones', name: 'Smartphones', imageUrl: '/images/categories/smartphones.png', imageAlt: 'Smartphones' },
-    { slug: 'laptops', name: 'Laptops', imageUrl: '/images/categories/laptops.png', imageAlt: 'Laptops' },
-    { slug: 'home-appliances', name: 'Home Appliances', imageUrl: '/images/categories/tablets.png', imageAlt: 'Home Appliances' }, // tablets.png is placeholder
-    { slug: 'audio-equipment', name: 'Audio Equipment', imageUrl: '/images/categories/audio.png', imageAlt: 'Audio Equipment' },
+    { slug: 'smartphones', name: 'Smartphones', imageUrl: '/images/categories/smartphone.png', imageAlt: 'Smartphones' },
+    { slug: 'tablets', name: 'Tablets', imageUrl: '/images/categories/tablet.png', imageAlt: 'Tablets' },
+    { slug: 'smartwatches', name: 'Smartwatches', imageUrl: '/images/categories/smartwatch.png', imageAlt: 'Smartwatches' },
+    { slug: 'gameconsoles', name: 'Game Consoles', imageUrl: '/images/categories/gameconsole.png', imageAlt: 'Game Consoles' },
+    { slug: 'algemeen', name: 'Algemeen', imageUrl: '/images/categories/algemeen.png', imageAlt: 'Algemeen' },
 ];
 
 export default function PopularCategories() {

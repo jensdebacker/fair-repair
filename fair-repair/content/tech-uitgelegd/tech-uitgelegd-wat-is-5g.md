@@ -2,7 +2,8 @@
 title: "Tech Uitgelegd: Wat is 5G en Heb Ik Het Nodig?"
 date: "2025-05-18"
 author: "Fair-repair Team"
-category: "Tech Uitgelegd"
+productCategory: "smartphones" # BELANGRIJK
+type: "tech uitgelegd"
 slug: "tech-uitgelegd-wat-is-5g"
 tags: ["5g", "technologie", "smartphones", "connectiviteit", "uitleg"]
 description: "5G is overal, maar wat betekent het nu echt voor jou als consument? Lees onze eenvoudige uitleg over de voordelen en vereisten van 5G."

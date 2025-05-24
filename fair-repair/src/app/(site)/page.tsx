@@ -24,11 +24,11 @@ export default async function HomePage() {
       {/* Hero Section - Komt overeen met Desktop design */}
       {/* Op mobiel zal deze sectie gewoon boven de andere content staan. */}
       <Hero />
-
+      <PopularCategories />
       {/* Volgorde zoals in de nieuwe designs (mobiel prominent, desktop logisch) */}
       <RecentArticles />
 
-      <PopularCategories />
+
 
       <FeaturedGuides />
 

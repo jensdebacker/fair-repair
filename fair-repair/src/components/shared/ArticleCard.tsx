@@ -1,81 +1,67 @@
-// components/shared/ArticleCard.tsx
+// src/components/shared/ArticleCard.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-// ... (andere imports zoals Card, Button, icons)
-import { ArticlePost, GuidePost, PostFrontMatter } from '@/lib/types'; // Gebruik de types
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { CalendarDays, ArrowRight } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ContentListItem, ContentType } from '@/lib/types'; // Importeer ContentType
 
 interface ArticleCardProps {
-    // item kan een ArticlePost of GuidePost zijn (of een gecombineerd type met metadata)
-    item: (Omit<ArticlePost, 'contentHtml'> & { layoutType: 'article' }) | (Omit<GuidePost, 'contentHtml'> & { layoutType: 'guide' });
+    item: ContentListItem;
 }
 
-export default function ArticleCard({ item }: ArticleCardProps) {
-    let href: string;
-    let title: string;
-    let excerpt: string;
-    let featuredImage: string | undefined;
-    let date: string;
-    let category: string; // Of specifieker type
-
-    if (item.layoutType === 'article') {
-        // Het is een ArticlePost (of de metadata ervan)
-        // @ts-ignore (slugSegments en fullSlug bestaan op ArticlePost)
-        href = `/articles/${item.fullSlug}`;
-        title = item.title;
-        excerpt = item.excerpt;
-        featuredImage = item.featuredImage;
-        date = item.date;
-        category = item.category;
-    } else if (item.layoutType === 'guide') {
-        // Het is een GuidePost
-        // @ts-ignore (slug bestaat op GuidePost)
-        href = `/guides/${item.slug}`;
-        title = item.title;
-        excerpt = item.excerpt;
-        featuredImage = item.featuredImage;
-        date = item.date;
-        category = item.category; // Guides kunnen ook een categorie hebben
-    } else {
-        // Fallback of error
-        return <p>Error: Unknown item type</p>;
+// Helper om de basis URL per content type te krijgen
+// Zorg dat de cases overeenkomen met de `ContentType` waarden (mapnamen)
+const getBasePathForType = (type: ContentType): string => {
+    switch (type) {
+        case 'reparatiegidsen': return '/reparatiegidsen';
+        case 'reviews': return '/reviews';
+        case 'top-lijsten': return '/top-lijsten';
+        case 'tech-uitgelegd': return '/tech-uitgelegd';
+        case 'how-to': return '/how-to-gidsen';
+        case 'nieuws': return '/nieuws';
+        default:
+            // Fallback voor het geval een onbekend type wordt meegegeven.
+            // Gooi een error of log een waarschuwing.
+            console.warn(`Unknown content type for basePath: ${type}`);
+            return '/'; // Of een geschikte fallback/error pagina
     }
+};
 
-    const formattedDate = new Date(date).toLocaleDateString('nl-NL', {
-        year: 'numeric', month: 'short', day: 'numeric',
-    });
+export default function ArticleCard({ item }: ArticleCardProps) {
+    const basePath = getBasePathForType(item.type);
+    const href = `<span class="math-inline">\{basePath\}/</span>{item.slug}`;
 
     return (
-        <Card className="flex flex-col h-full overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-lg group bg-card">
-            {featuredImage && (
-                <Link href={href} className="block aspect-video relative overflow-hidden rounded-t-lg">
-                    <Image src={featuredImage} alt={title} fill sizes="(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 25vw" className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
-                </Link>
-            )}
-            <CardHeader className="p-4">
-                <CardDescription className="text-xs flex items-center text-muted-foreground mb-1">
-                    <span className={`inline-block text-xs mr-2 px-2 py-0.5 rounded-full ${item.layoutType === 'guide' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                        {item.layoutType === 'guide' ? "Gids" : "Artikel"}
-                    </span>
-                    {/* Optioneel: Categorie specifiek voor het item */}
-                    {category && <span className="mr-2 text-xs">{category.replace(/-/g, ' ')}</span>}
-                    <CalendarDays className="h-3.5 w-3.5 mr-1" />
-                    {formattedDate}
-                </CardDescription>
-                <CardTitle className="text-base md:text-lg leading-snug font-semibold">
-                    <Link href={href} className="hover:text-primary transition-colors line-clamp-2">{title}</Link>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0 flex-grow">
-                <p className="text-sm text-muted-foreground line-clamp-3">{excerpt}</p>
-            </CardContent>
-            <CardFooter className="p-4 pt-2">
-                <Button variant="link" asChild className="p-0 text-sm text-primary hover:underline font-medium">
-                    <Link href={href}>Lees meer <ArrowRight className="ml-1 h-4 w-4" /></Link>
-                </Button>
-            </CardFooter>
-        </Card>
+        <Link href={href} className="group block h-full">
+            <Card className="h-full flex flex-col transition-shadow duration-300 ease-in-out group-hover:shadow-lg">
+                {item.image && (
+                    <div className="relative w-full aspect-[16/9]"> {/* Gebruik aspect ratio voor consistentie */}
+                        <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover rounded-t-lg"
+                        />
+                    </div>
+                )}
+                <CardHeader>
+                    <CardTitle className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-2">
+                        {item.title}
+                    </CardTitle>
+                    {item.productCategory && (
+                        <Badge variant="secondary" className="mt-1 w-fit">{item.productCategory}</Badge>
+                    )}
+                </CardHeader>
+                <CardContent className="flex-grow">
+                    <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
+                </CardContent>
+                <CardFooter>
+                    <p className="text-xs text-muted-foreground">
+                        {new Date(item.date).toLocaleDateString('nl-BE', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                </CardFooter>
+            </Card>
+        </Link>
     );
 }

@@ -1,8 +1,9 @@
 ---
-title: "Zelf je Smartphone Batterij Vervangen: Een Stap-voor-Stap Gids"
+title: "Zelf je Smartphone Batterij Vervangen vbs"
 date: "2025-05-22"
 author: "Fair-repair Team"
-category: "Reparatiegidsen"
+productCategory: "tablets" # BELANGRIJK
+type: "reparatiegids"
 slug: "reparatiegids-smartphone-batterij-vervangen"
 tags: ["smartphone", "batterij", "reparatie", "diy"]
 description: "Leer hoe je zelf de batterij van je smartphone kunt vervangen en bespaar op reparatiekosten. Volg onze gedetailleerde gids."
