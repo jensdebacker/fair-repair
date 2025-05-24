@@ -43,7 +43,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             {items.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.map((item) => (
-                        <ArticleCard key={`<span class="math-inline">\{item\.type\}\-</span>{item.slug}`} item={item} />
+                        <ArticleCard key={`${item.type}-${item.slug}`} item={item} />
                     ))}
                 </div>
             ) : (

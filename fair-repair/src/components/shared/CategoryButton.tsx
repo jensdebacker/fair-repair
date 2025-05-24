@@ -14,7 +14,7 @@ export default function CategoryButton({ category }: CategoryButtonProps) {
             variant="outline" // Behoud outline, of maak custom styling
             className="h-auto p-0 border bg-card shadow-sm hover:shadow-md transition-all group rounded-lg overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
-            <Link href={`/category/${category.slug}`} className="flex flex-col items-center justify-start p-4 text-center h-full">
+            <Link href={`/${category.slug}`} className="flex flex-col items-center justify-start p-4 text-center h-full">
                 <div className="relative w-16 h-16 md:w-20 md:h-20 mb-3"> {/* Consistent met mobiel design */}
                     <Image
                         src={category.image}
