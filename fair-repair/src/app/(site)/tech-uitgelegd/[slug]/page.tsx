@@ -13,7 +13,8 @@ interface PageProps {
     params: { slug: string };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+    const params = await props.params;
     const item = await getContentItemBySlugAndType<TechUitgelegd>('tech-uitgelegd', params.slug);
 
     if (!item) {
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default async function TechUitgelegdPage({ params }: PageProps) {
+export default async function TechUitgelegdPage(props: PageProps) {
+    const params = await props.params;
     const item = await getContentItemBySlugAndType<TechUitgelegd>('tech-uitgelegd', params.slug);
 
     if (!item) {

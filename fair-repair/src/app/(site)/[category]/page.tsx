@@ -1,11 +1,11 @@
 // src/app/(site)/[category]/page.tsx
 import { getContentListItemsByProductCategory } from '@/lib/content';
-import { Category } from '@/lib/types';
+import { CategorySlug } from '@/lib/types';
 import ArticleCard from '@/components/shared/ArticleCard';
 import SectionTitle from '@/components/shared/SectionTitle';
 import { notFound } from 'next/navigation';
 
-const validCategories: Category[] = ["smartphones", "tablets", "smartwatches", "gameconsoles", "algemeen"];
+const validCategories: CategorySlug[] = ["smartphones", "tablets", "smartwatches", "gameconsoles", "algemeen"];
 
 export async function generateStaticParams() {
     return validCategories.map((category) => ({
@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 
 interface CategoryPageProps {
     params: {
-        category: Category;
+        category: CategorySlug;
     };
 }
 

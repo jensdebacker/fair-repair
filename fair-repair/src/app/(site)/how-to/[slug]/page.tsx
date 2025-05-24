@@ -11,16 +11,16 @@ export async function generateStaticParams() {
 
 interface PageProps { params: { slug: string }; }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug } = params; // Destructure slug
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+    const params = await props.params;
+    const item = await getContentItemBySlugAndType<HowToGids>('how-to', params.slug);
 
-    const item = await getContentItemBySlugAndType<HowToGids>('how-to', slug);
     if (!item) return { title: 'Artikel niet gevonden' };
     return { title: item.title, description: item.summary };
 }
 
-export default async function HowToPage({ params }: PageProps) {
-    const { slug } = params; // Destructure slug
-    const howto = await getContentItemBySlugAndType<HowToGids>('how-to', slug); if (!howto) notFound();
+export default async function HowToPage(props: PageProps) {
+    const params = await props.params;
+    const howto = await getContentItemBySlugAndType<HowToGids>('how-to', params.slug); if (!howto) notFound();
     return <ArticleLayout metadata={howto} />;
 }

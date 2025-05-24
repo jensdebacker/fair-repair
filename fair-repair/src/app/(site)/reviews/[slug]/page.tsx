@@ -12,7 +12,8 @@ export async function generateStaticParams() {
     return getAllSlugsForContentType('reviews');
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+    const params = await props.params;
     const reviewItem = await getContentItemBySlugAndType<Review>('reviews', params.slug);
 
     if (!reviewItem) {
@@ -33,7 +34,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default async function ReviewPage({ params }: PageProps) {
+export default async function ReviewPage(props: PageProps) {
+    const params = await props.params;
     const reviewData = await getContentItemBySlugAndType<Review>('reviews', params.slug);
 
     if (!reviewData) {

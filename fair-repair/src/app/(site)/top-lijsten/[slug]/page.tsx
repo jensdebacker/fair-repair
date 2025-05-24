@@ -13,8 +13,9 @@ interface PageProps {
     params: { slug: string };
 }
 
-export async function generateMetadata({ params: { slug } }: PageProps): Promise<Metadata> {
-    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', slug);
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+    const params = await props.params;
+    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
 
     if (!list) {
         return {
@@ -34,8 +35,10 @@ export async function generateMetadata({ params: { slug } }: PageProps): Promise
     };
 }
 
-export default async function TopXListPage({ params: { slug } }: PageProps) {
-    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', slug);
+export default async function TopXListPage(props: PageProps) {
+    const params = await props.params;
+    const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
+
 
     if (!list) {
         notFound();
@@ -48,6 +51,8 @@ export default async function TopXListPage({ params: { slug } }: PageProps) {
             <div className="content">
                 <h1>{list.title}</h1>
                 <p>{list.summary}</p>
+                <div dangerouslySetInnerHTML={{ __html: list.body }} />
+
                 {/* You can add more content here if needed */}
             </div>
         </TopXListLayout>
