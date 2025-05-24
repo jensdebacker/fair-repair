@@ -19,7 +19,7 @@ export default function TopXListLayout({ metadata, children }: { metadata: TopXL
         <ArticleLayout metadata={metadata}>
             {/* TopX-specific content zoals productenlijst */}
             <div className="products-grid">
-                {metadata.products.map(product => (
+                {metadata.products && metadata.products.length > 0 && metadata.products.map(product => (
                     <Card key={product.name} className="product-card">
                         {product.image && (
                             <Image src={product.image} alt={product.name} width={200} height={200} />

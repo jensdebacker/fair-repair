@@ -182,7 +182,10 @@ async function getContentItemsOfType<T extends BaseContent>(
   //hiermee kan je bijvoorbeeld de slug, title, date, etc. ophalen van elk bestand
   const allContentData = await Promise.all(
     filePaths.map(async (filePath) => {
-      const slug = filePath.replace(/\.mdx?$/, "");
+      const slug = filePath
+        .replace(/\.mdx?$/, "")
+        .toLowerCase()
+        .replace(/\s+/g, "-");
 
       const fullPath = path.join(directory, filePath);
       const fileContents = fs.readFileSync(fullPath, "utf8");
