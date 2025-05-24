@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Category } from '@/lib/types';// Gebruik de Category type
+import { CategoryInfo, CategorySlug } from '@/lib/types';// Gebruik de Category type
 
 interface CategoryButtonProps {
-    category: Category;
+    category: CategoryInfo;
 }
 
 export default function CategoryButton({ category }: CategoryButtonProps) {
@@ -17,7 +17,7 @@ export default function CategoryButton({ category }: CategoryButtonProps) {
             <Link href={`/category/${category.slug}`} className="flex flex-col items-center justify-start p-4 text-center h-full">
                 <div className="relative w-16 h-16 md:w-20 md:h-20 mb-3"> {/* Consistent met mobiel design */}
                     <Image
-                        src={category.imageUrl}
+                        src={category.image}
                         alt={category.imageAlt}
                         fill
                         sizes="(max-width: 768px) 64px, 80px"

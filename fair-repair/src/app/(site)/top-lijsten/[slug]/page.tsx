@@ -9,16 +9,47 @@ export async function generateStaticParams() {
     return getAllSlugsForContentType('top-lijsten');
 }
 
-interface PageProps { params: { slug: string }; }
+interface PageProps {
+    params: { slug: string };
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
-    if (!list) return { title: 'Lijst niet gevonden' };
-    return { title: list.title, description: list.summary };
+
+    if (!list) {
+        return {
+            title: 'Lijst niet gevonden',
+            description: 'Deze lijst kon niet worden gevonden.'
+        };
+    }
+
+    return {
+        title: list.title,
+        description: list.summary,
+        openGraph: {
+            title: list.title,
+            description: list.summary,
+            images: list.image ? [{ url: list.image }] : [],
+        },
+    };
 }
 
 export default async function TopXListPage({ params }: PageProps) {
     const list = await getContentItemBySlugAndType<TopXList>('top-lijsten', params.slug);
-    if (!list) notFound();
-    return <TopXListLayout list={list} />;
+
+    if (!list) {
+        notFound();
+    }
+
+    // Fix: TopXListLayout expects both metadata and children props
+    return (
+        <TopXListLayout metadata={list}>
+            {/* Add your content here if needed */}
+            <div className="content">
+                <h1>{list.title}</h1>
+                <p>{list.summary}</p>
+                {/* You can add more content here if needed */}
+            </div>
+        </TopXListLayout>
+    );
 }

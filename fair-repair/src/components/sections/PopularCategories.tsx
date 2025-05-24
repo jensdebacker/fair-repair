@@ -1,14 +1,14 @@
 import CategoryButton from '@/components/shared/CategoryButton';
 import SectionTitle from '@/components/shared/SectionTitle';
-import { Category } from '@/lib/types';
+import { CategoryInfo, CategorySlug } from '@/lib/types';
 
 // Pas aan naar de categorieën in je mobiele design
-const categoriesData: Category[] = [
-    { slug: 'smartphones', name: 'Smartphones', imageUrl: '/images/categories/smartphone.png', imageAlt: 'Smartphones' },
-    { slug: 'tablets', name: 'Tablets', imageUrl: '/images/categories/tablet.png', imageAlt: 'Tablets' },
-    { slug: 'smartwatches', name: 'Smartwatches', imageUrl: '/images/categories/smartwatch.png', imageAlt: 'Smartwatches' },
-    { slug: 'gameconsoles', name: 'Game Consoles', imageUrl: '/images/categories/gameconsole.png', imageAlt: 'Game Consoles' },
-    { slug: 'algemeen', name: 'Algemeen', imageUrl: '/images/categories/algemeen.png', imageAlt: 'Algemeen' },
+const categoriesData: CategoryInfo[] = [
+    { slug: 'smartphones', name: 'Smartphones', image: '/images/categories/smartphone.png', imageAlt: 'Smartphones' },
+    { slug: 'tablets', name: 'Tablets', image: '/images/categories/tablet.png', imageAlt: 'Tablets' },
+    { slug: 'smartwatches', name: 'Smartwatches', image: '/images/categories/smartwatch.png', imageAlt: 'Smartwatches' },
+    { slug: 'gameconsoles', name: 'Game Consoles', image: '/images/categories/gameconsole.png', imageAlt: 'Game Consoles' },
+    { slug: 'algemeen', name: 'Algemeen', image: '/images/categories/algemeen.png', imageAlt: 'Algemeen' },
 ];
 
 export default function PopularCategories() {

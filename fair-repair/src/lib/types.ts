@@ -36,12 +36,21 @@
 //   imageAlt: string;
 // }
 
-export type Category =
+export type CategorySlug =
   | "smartphones"
   | "tablets"
   | "smartwatches"
   | "gameconsoles"
   | "algemeen";
+
+export interface CategoryInfo {
+  slug: CategorySlug; // "smartphones", "tablets", etc.
+  name: string; // "Smartphones", "Tablets" (voor weergave)
+  image: string; // Pad naar de afbeelding, bv. "/images/categories/smartphone.png"
+  description?: string; // Optionele beschrijving
+  imageAlt: string; // Alternatieve tekst voor de afbeelding
+  // Voeg hier eventueel andere velden toe die je per categorie nodig hebt
+}
 
 // Basisinterface voor alle content
 export interface BaseContent {
@@ -52,7 +61,9 @@ export interface BaseContent {
   image?: string;
   type: ContentType;
   body: string; // Voor de geparste Markdown body
-  productCategory?: Category; // Niet alle content heeft een specifieke productcategorie
+  productCategory?: CategorySlug; // Niet alle content heeft een specifieke productcategorie
+  pros?: string[]; // Added missing pros property
+  cons?: string[];
 }
 
 // Specifieke content types
@@ -119,7 +130,7 @@ export interface ContentListItem {
   summary: string;
   image?: string;
   type: ContentType;
-  productCategory?: Category;
+  productCategory?: CategorySlug;
 }
 
 // Behoud Product type als je het los gebruikt, anders integreer in TopXList.

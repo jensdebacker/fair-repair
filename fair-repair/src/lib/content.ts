@@ -152,7 +152,7 @@ import {
   TechUitgelegd,
   HowToGids,
   NieuwsArtikel,
-  Category,
+  CategorySlug,
   ContentListItem,
 } from "./types";
 // De content directory is de map waar al je markdown bestanden staan
@@ -266,7 +266,7 @@ export async function getAllContentListItems(): Promise<ContentListItem[]> {
 
 //Voor categoriepagina’s waar je alleen content van een bepaalde productgroep wilt tonen.
 export async function getContentListItemsByProductCategory(
-  productCategory: Category
+  productCategory: CategorySlug
 ): Promise<ContentListItem[]> {
   const allItems = await getAllContentListItems();
   return allItems.filter((item) => item.productCategory === productCategory);

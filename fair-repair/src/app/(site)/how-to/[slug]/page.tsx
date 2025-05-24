@@ -20,5 +20,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function HowToPage({ params }: PageProps) {
     const howto = await getContentItemBySlugAndType<TechUitgelegd>('how-to', params.slug);
     if (!howto) notFound();
-    return <ArticleLayout howto={howto} />;
+    return <ArticleLayout metadata={howto} />;
 }
