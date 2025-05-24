@@ -6,7 +6,7 @@ productCategory: "tablets" # BELANGRIJK
 type: "reparatiegids"
 slug: "reparatiegids-smartphone-batterij-vervangen"
 tags: ["smartphone", "batterij", "reparatie", "diy"]
-description: "Leer hoe je zelf de batterij van je smartphone kunt vervangen en bespaar op reparatiekosten. Volg onze gedetailleerde gids."
+summary: "Leer hoe je zelf de batterij van je smartphone kunt vervangen en bespaar op reparatiekosten. Volg onze gedetailleerde gids."
 ---
 
 Is de batterij van je smartphone snel leeg of valt je telefoon plotseling uit? Dan is het misschien tijd om de batterij te vervangen. Hoewel het per model verschilt, is het vaak mogelijk om dit zelf te doen. Deze gids helpt je op weg.

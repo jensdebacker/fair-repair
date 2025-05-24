@@ -17,7 +17,7 @@ const getBasePathForType = (type: ContentType): string => {
         case 'reviews': return '/reviews';
         case 'top-lijsten': return '/top-lijsten';
         case 'tech-uitgelegd': return '/tech-uitgelegd';
-        case 'how-to': return '/how-to-gidsen';
+        case 'how-to': return '/how-to';
         case 'nieuws': return '/nieuws';
         default:
             // Fallback voor het geval een onbekend type wordt meegegeven.

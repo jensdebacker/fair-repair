@@ -4,7 +4,7 @@ date: "2024-05-22"
 summary: "Een stap-voor-stap gids om de batterij van je smartphone te vervangen."
 image: "/images/placeholder-gids.jpg"
 productCategory: "smartphones" # BELANGRIJK
-type: "reparatiegids" # Kan impliciet, maar expliciet helpt
+type: "how-to" # Kan impliciet, maar expliciet helpt
 difficulty: "gemiddeld"
 tools: ["Schroevendraaierset", "Plectrum", "Zuignap"]
 costBenefitAnalysis: "Kosten nieuwe batterij vs. nieuwe telefoon."
